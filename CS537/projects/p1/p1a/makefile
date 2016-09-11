@@ -1,32 +1,20 @@
-SDIR = ./src
+CC = gcc
 
 IDIR = ./include
-CC = gcc
-CFLAGS = -I$(IDIR) -Wall -Werror
+SDIR = ./src
+BDIR = ./bin
 
-_DEPS = sort.h
-DEPS=$(patsubst %, $(IDIR)/%, $(_DEPS))
+FLAGS1 = -Wall -Werror -I$(IDIR)
+FLAGS2 = -O -Wall -I$(IDIR)
 
-BDIR = bin
-BIN_genvar = $(BDIR)/genvar
-BIN_dumpvar = $(BDIR)/dumpvar
-BIN_varsort = $(BDIR)/arsort
-OBJ_genvar = $(BIN_genvar).o
-OBJ_dumpvar = $(BIN_dumpvar).o
-OBJ_varsort = $(BIN_varsort).o
+prepare : $(SDIR)/genvar.c $(SDIR)/dumpvar.c
+	$(CC) -o $(BDIR)/genvar.out $(SDIR)/genvar.c $(FLAGS1)
+	$(CC) -o $(BDIR)/dumpvar.out $(SDIR)/dumpvar.c $(FLAGS1)
 
-$(BDIR)/%.o : $(SDIR)/%.c $(DEPS)
-	$(CC) -c -o $@ $< $(CFLAGS)
+sort : $(SDIR)/varsort.c
+	$(CC) -o $(BDIR)/varsort.out $(SDIR)/varsort.c $(FLAGS2)
 
-prepare : $(OBJ_genvar) $(OBJ_dumpvar)
-	$(CC) -o $(BIN_genvar) $(OBJ_genvar) $(CFLAGS)
-	$(CC) -o $(BIN_dumpvar) $(OBJ_dumpvar) $(CFLAGS)
+.PHONY : clean
 
-varsort : $(OBJ_varsort)
-	
-
-
-.PHONY: clean
-
-clean:
+clean :
 	@rm -f $(BDIR)/*
